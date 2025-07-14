@@ -1,0 +1,26 @@
+:root {
+    --color-red: #BB141A;
+    --color-red-2: #D2232A;
+    --color-secondary: #FFCB05;
+    --font-main: 'Be Vietnam Pro', sans-serif;
+    --font-heading: 'Inter', sans-serif;
+    --container-width: 1100px;
+}
+
+
+.css-8mmkcg {
+    display: inline-block;
+    fill: #BB141A;
+    line-height: 1;
+    stroke: #BB141A;
+    stroke-width: 0;
+}
+
+.css-1u9des2-indicatorSeparator {
+    align-self: stretch;
+    width: 1px;
+    background-color: rgb(204, 204, 204);
+    margin-bottom: 8px;
+    margin-top: 8px;
+    box-sizing: border-box;
+}

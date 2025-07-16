@@ -1,6 +1,10 @@
-import ItemMain from "../components/ItemMain";
-import ItemCard from "../components/ItemCard";
-import ItemModal from "../components/ItemModal";
+// import ItemMain from "../components/ItemMain";
+// import ItemCard from "../components/ItemCard";
+// import ItemModal from "../components/ItemModal";
+import CultureModal from "./CultureModal";
+import CultureCard from "./CultureCard";
+import CultureMain from "./CultureMain";
+import "./Phivatthe.css";
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -20,8 +24,14 @@ function Phivatthe() {
   const location = useLocation();
 
   // Hàm điều hướng đến trang chi tiết
-  const handleExplore = (item) => {
+  const handExplore = (item) => {
     navigate(`/detail/${item.itemID}`);
+  };
+
+  const handleNavigation = (itemID) => {
+    const query = new URLSearchParams(location.search);
+    query.set("startId", itemID);
+    navigate(`?${query.toString()}`); // Cập nhật URL sẽ kích hoạt useEffect
   };
 
   useEffect(() => {
@@ -30,7 +40,7 @@ function Phivatthe() {
     const startId = query.get("startId") || 0;
 
     // Gọi API để lấy danh sách vật thể
-    fetch(`${API_BASE_URL}/phivatthe/items?startId=${startId}`)
+    fetch(`${API_BASE_URL}/phivatthe/items?startId=${startId || ""}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -59,57 +69,58 @@ function Phivatthe() {
   }, [location.search]); // Chạy lại effect khi URL query thay đổi
 
   return (
-    <div className="bg-black min-h-screen overflow-hidden flex flex-row text-white">
-      {/* Cột trái: Nội dung chính */}
-      <div className="w-1/2 h-screen">
-        {mainItem && <ItemMain item={mainItem} onExplore={handleExplore} />}
+    <div className="main-section">
+      {mainItem && <CultureMain item={mainItem} onExplore={handExplore} />}
+      <div className="card-list">
+        {cards.map((card) => (
+          <CultureCard
+            key={card.itemID}
+            card={card}
+            onClick={(selectedCard) => {
+              // Cập nhật lại URL và mainItem
+              const query = new URLSearchParams(location.search);
+              query.set("startId", selectedCard.itemID);
+              navigate(`?${query.toString()}`);
+            }}
+          />
+        ))}
       </div>
 
-      {/* Cột phải: Danh sách thẻ và phân trang */}
-      <div className="w-1/2 h-screen flex flex-col p-8">
-        <div className="flex justify-between items-center flex-shrink-0 mb-6">
-          <h2 className="text-3xl font-bold">Khám phá thêm</h2>
+      {pageInfo && (
+        <div className="pagination">
           <button
-            onClick={() => setShowModal(true)}
-            className="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-green-500 transition-colors"
+            className="page-btn"
+            onClick={() => handleNavigation(pageInfo.prevID)}
           >
-            Danh sách
+            &lt;
           </button>
+          <button
+            className="page-btn"
+            onClick={() => handleNavigation(pageInfo.nextID)}
+          >
+            &gt;
+          </button>
+          <span className="page-number">
+            Trang {pageInfo.currentPage} / {pageInfo.total}
+          </span>
         </div>
+      )}
 
-        {/* Vùng chứa thẻ có thể cuộn ngang */}
-        <div className="flex-grow overflow-x-auto pb-4 flex items-center">
-          <div className="flex flex-row space-x-6">
-            {cards.map((card) => (
-              <ItemCard key={card.itemID} card={card} />
-            ))}
-          </div>
-        </div>
-
-        {/* Phân trang ở dưới cùng của cột phải */}
-        {pageInfo && (
-          <div className="flex-shrink-0 mt-6 flex items-center justify-center gap-4">
-            <a
-              href={`?startId=${pageInfo.prevStartId}`}
-              className="bg-yellow-500 text-black w-10 h-10 flex items-center justify-center rounded-full font-bold hover:bg-green-500 transition-colors"
-            >
-              &lt;
-            </a>
-            <span className="text-lg text-white">
-              Trang {pageInfo.currentPage} / {pageInfo.total}
-            </span>
-            <a
-              href={`?startId=${pageInfo.nextStartId}`}
-              className="bg-yellow-500 text-black w-10 h-10 flex items-center justify-center rounded-full font-bold hover:bg-green-500 transition-colors"
-            >
-              &gt;
-            </a>
-          </div>
-        )}
-      </div>
-
-      {/* Modal */}
-      {showModal && <ItemModal onClose={() => setShowModal(false)} />}
+      <button
+        onClick={() => setShowModal(true)}
+        className="search search-fixed"
+      >
+        Danh sách văn hóa
+      </button>
+      {showModal && (
+        <CultureModal
+          onClose={() => setShowModal(false)}
+          onSelectItem={(selected) => {
+            handleNavigation(selected.itemID); // Gọi API để cập nhật mainItem và cards chính xác
+            setShowModal(false); // Đóng modal
+          }}
+        />
+      )}
     </div>
   );
 }

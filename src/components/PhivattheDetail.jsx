@@ -57,7 +57,7 @@ function PhivattheDetail() {
   const [details, setDetails] = useState(null);
 
   useEffect(() => {
-    document.body.className = "bg-red-700";
+    document.body.className = "bg-red-300";
 
     // Gọi API mới để lấy chi tiết vật thể
     fetch(`${API_BASE_URL}/phivatthe/items/${id}`)
@@ -75,7 +75,7 @@ function PhivattheDetail() {
   }, [id]);
 
   return (
-    <div className="max-w-5xl mx-auto p-5 sm:p-10 bg-yellow-300">
+    <div className="max-w-7xl mx-auto p-5 sm:p-10 bg-yellow-300">
       {details ? (
         details.map((section, index) => (
           <ContentSection key={index} section={section} index={index} />

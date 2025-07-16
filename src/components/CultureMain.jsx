@@ -1,4 +1,4 @@
-import { motion as Motion } from "framer-motion";
+import { motion as Motion } from 'framer-motion'
 
 const BACKEND_DOMAIN = process.env.REACT_APP_API_BASE;
 
@@ -11,24 +11,26 @@ const getImageUrl = (path) => {
   return `${BACKEND_DOMAIN}${path}`;
 };
 
-function ItemMain({ item, onExplore }) {
+function CultureMain({ item, onExplore }) {
   return (
     <Motion.div
+      className="culture"
       key={item.itemID}
-      className="relative w-full h-full" // Thay đổi h-screen thành h-full
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.7 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.7, type: "spring" }}
+      style={{ transformOrigin: 'center center' }}
+      transition={{
+        duration: 0.6,
+        type: 'spring',
+        stiffness: 80,
+        damping: 15
+      }}
     >
       <img
-        className="w-full h-full object-cover"
-        src={getImageUrl(item.imageURL)}
-        alt={item.name}
-      />
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-start p-10 md:p-20 text-white">
+        className="main-img" src={getImageUrl(item.imageURL)} alt=""/>
+      <div className="overlay">
         <Motion.h2
-          className="text-5xl md:text-7xl font-bold max-w-2xl leading-tight mb-4"
+          className="name-culture"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -36,7 +38,7 @@ function ItemMain({ item, onExplore }) {
           {item.name}
         </Motion.h2>
         <Motion.p
-          className="text-lg md:text-xl max-w-md md:max-w-xl mb-8"
+          className="introduction"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -44,16 +46,17 @@ function ItemMain({ item, onExplore }) {
           {item.shortDescription}
         </Motion.p>
         <Motion.button
-          className="bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-colors"
+          className="explore"
           onClick={() => onExplore(item)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 30, duration: 0.2 }}
         >
           Khám phá
         </Motion.button>
       </div>
     </Motion.div>
-  );
+  )
 }
 
-export default ItemMain;
+export default CultureMain
